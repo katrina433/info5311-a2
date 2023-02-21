@@ -1,7 +1,8 @@
 /**
  * Create a radial chart for the given data.
+ * 
  * @param svg the canvas for chart display.
- * @param data data in the format of [{x: "category", y: value}]
+ * @param data data in the format of [{x: category, m: num male perpetrator, f: num female perpetrator}]
  */
 function radialChart(svg, data) {
   const width = svg.attr("width");
@@ -15,7 +16,7 @@ function radialChart(svg, data) {
 
   // x and y extent and scale 
   const xExtent = new Set(data.map(d => d.x));
-  const yExtent = d3.extent(data, d => d.y)
+  const yExtent = d3.extent(data, d => d.m + d.f);
   const xScale = d3.scaleBand().domain(xExtent).range([0, 2 * Math.PI]);
   const yScale = d3.scaleRadial().domain([0, yExtent[1]]).range([innerRadius, outerRadius]);
 
@@ -53,9 +54,16 @@ function radialChart(svg, data) {
     .text("Number Executed");
 
   // arc generator for the circular bars
-  const arcGenerator = d3.arc()
+  const arcGeneratorMale = d3.arc()
     .innerRadius(d => yScale(0))
-    .outerRadius(d => yScale(d.y))
+    .outerRadius(d => yScale(d.m))
+    .startAngle(d => xScale(d.x) + 0.15)
+    .endAngle(d => xScale(d.x) + xScale.bandwidth() - 0.15)
+    .padRadius(innerRadius);
+
+  const arcGeneratorFemale = d3.arc()
+    .innerRadius(d => yScale(d.m))
+    .outerRadius(d => yScale(d.m + d.f))
     .startAngle(d => xScale(d.x) + 0.15)
     .endAngle(d => xScale(d.x) + xScale.bandwidth() - 0.15)
     .padRadius(innerRadius);
@@ -65,15 +73,21 @@ function radialChart(svg, data) {
     .data(data)
     .join("g");
 
-  // bars
+  // bars for male perpetrator
   bars.append("path")
     .attr("fill", "blue")
     .attr("opacity", 0.7)
-    .attr("d", arcGenerator);
+    .attr("d", arcGeneratorMale);
+
+  // bars for female perpetrator
+  bars.append("path")
+    .attr("fill", "green")
+    .attr("opacity", 0.7)
+    .attr("d", arcGeneratorFemale);
 
   // x labels above the bars
   bars.append("text")
     .attr("transform", d => `rotate(${(xScale(d.x) + xScale.bandwidth()/2) * 180/Math.PI})`)
-    .attr("y", d => -yScale(d.y) - 10)
+    .attr("y", d => -yScale(d.m + d.f) - 10)
     .text(d => d.x);
 }

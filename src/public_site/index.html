@@ -33,14 +33,14 @@
   
     <script>
       const svg = d3.select("svg#radial_chart");
-  
+
       const data = [
-        {x: "g1", y: 50},
-        {x: "g2", y: 30},
-        {x: "g3", y: 40},
-        {x: "g4", y: 30},
-        {x: "g5", y: 70},
-        {x: "g6", y: 20},
+        {x: "g1", m: 50, f: 30},
+        {x: "g2", m: 30, f: 50},
+        {x: "g3", m: 40, f: 10},
+        {x: "g4", m: 30, f: 20},
+        {x: "g5", m: 70, f: 30},
+        {x: "g6", m: 20, f: 40},
       ]
       radialChart(svg, data);
   
