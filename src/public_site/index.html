@@ -27,7 +27,8 @@
 </head>
 <body>
     <h1>INFO5311: HW2 - Interactive Visualization Design</h1>
-    <a href="https://www.kaggle.com/datasets/johnny1994/execution-data-in-us">Dataset: Execution Data</a>
+    <a href="https://www.kaggle.com/datasets/johnny1994/execution-data-in-us">Dataset: Execution Data from 1976
+        – 2019</a>
     <h3>Execution Data</h3>
     <h5>Introduction/Motivation</h5>
 
@@ -35,6 +36,196 @@
   
     <script>
       const svg = d3.select("svg#radial_chart");
+
+     // Get data
+      d3.csv("dpic_us_executions_db.csv", d3.autoType)
+        .then( (data) => {
+            /*
+            Fields:
+            Execution Volunteer,Number of Victims,Juvenile,First Name,Last Name,Middle Name(s),Suffix,
+            Race,Sex,Region,Country,State,Foreign National,Execution Date,Number of White Male Victims,
+            Number of Black Male Victims,Number of Latino Male Victims,Number of Asian Male Victims,
+            Number of Native American Male Victims,Number of Other Race Male Victims,Number of White Female Victims,
+            Number of Black Female Victims,Number of Latino Female Victims,Number of Asian Female Victims,
+            Number of American Indian or Alaska Native Female Victims,Number of Other Race Female Victims,Victim(s) Race(s) 
+
+            */
+
+            // Clean data types
+            const timeParser = d3.timeParse('%m/%d/%y');
+            
+            // Counter dictionaries
+
+            // Year Intervals (total + by juvie)
+            let perpYearFreq = {};
+
+            // Month (total + by juvie)
+            let perpMonthFreq = {};
+
+            // Race (total + by victim gender + by juvie)
+            let perpRaceFreq = {};
+            let victRaceFreq = {};
+
+            // State (total + by juvie)
+            let perpStateFreq = {};
+
+            // Region (total + by juvie)
+            let perpRegionFreq = {};
+
+            // Gender
+            let perpGenderFreq = {};
+            let victGenderFreq = {};
+
+            data.forEach(d => {
+                /* parameters used across different graphs (ie. gender and juvie) */
+                // gender: "Male", 'Female'
+                let gender = d["Sex"].trim();
+                // juvie: "no",  "yes" --> changed to boolean value
+                let juvie = d["Juvenile"].trim() === "no" ? false : true;
+                // number of victims
+                let num_victims = d["Number of Victims"];
+
+                /* date */
+                let date = timeParser(d["Execution Date"]);
+                let month = date.getMonth();
+                let year = date.getFullYear();
+
+                d['month'] = month;
+                d['year'] = year;
+
+                let perpYear = perpYearFreq[year] ? perpYearFreq[year] : {total: 0, juvie: 0};
+                let perpYearTotal = perpYear['total'] + 1;
+                let perpYearJuvie = juvie ? perpYear['juvie'] + 1 : perpYear['juvie'];
+                perpYearFreq[year] = {total: perpYearTotal, juvie: perpYearJuvie};
+
+                let perpMonth = perpMonthFreq[month] ? perpMonthFreq[month] : {total: 0, juvie: 0};
+                let perpMonthTotal = perpMonth['total'] + 1;
+                let perpMonthJuvie = juvie ? perpMonth['juvie'] + 1 : perpMonth['juvie'];
+                perpMonthFreq[month] = {total: perpMonthTotal, juvie: perpMonthJuvie};
+                
+                /* race */
+                /// perpetrator
+                let race = d["Race"].trim();
+                let perpRace = perpRaceFreq[race] ? perpRaceFreq[race] : {total: 0, juvie: 0, male: 0, female: 0};
+                let perpRaceTotal = perpRace['total'] + 1;
+                let perpRaceJuvie = juvie ? perpRace['juvie'] + 1 : perpRace['juvie'];
+                let perpRaceMale = gender === "Male" ? perpRace['male'] + 1 : perpRace['male'];
+                let perpRaceFemale = gender === "Female" ? perpRace['female'] + 1 : perpRace['female'];
+                perpRaceFreq[race] = {total: perpRaceTotal, juvie: perpRaceJuvie, male: perpRaceMale, female: perpRaceFemale};
+
+                /// victim  
+                const races = ["White", "Black", "Latino", "Asian", "Native American", "American Indian or Alaska Native", "Other Race"];                
+                races.forEach(race => {
+                    let victRace = victRaceFreq[race] ? victRaceFreq[race] : {total: 0, male: 0, female: 0};
+                    let raceMaleVictims = d["Number of " + race + " Male Victims"] ? d["Number of " + race + " Male Victims"] : 0;
+                    let raceFemaleVictims = d["Number of " + race + " Female Victims"] ? d["Number of " + race + " Female Victims"] : 0;
+                    let victRaceMale = victRace['male'] + raceMaleVictims;
+                    let victRaceFemale = victRace['female'] + raceFemaleVictims;
+                    let victRaceTotal = victRace['total'] + raceMaleVictims + raceFemaleVictims;
+                    victRaceFreq[race] = {total: victRaceTotal, male: victRaceMale, female: victRaceFemale};
+                });
+
+
+                /* state */
+                /// perp
+                let state = d["State"].trim();
+                let perpState = perpStateFreq[state] ? perpStateFreq[state] : {total: 0, juvie: 0}
+                let perpStateTotal = perpState['total'] + 1;
+                let perpStateJuvie = juvie ? perpState['juvie'] + 1 : perpState['juvie'];
+                perpStateFreq[state] = {total: perpStateTotal, juvie: perpStateJuvie};
+
+
+                /* region */
+                /// perp
+                let region = d["Region"].trim();
+                let perpRegion = perpRegionFreq[region] ? perpRegionFreq[region] : {total: 0, juvie: 0}
+                let perpRegionTotal = perpRegion['total'] + 1;
+                let perpRegionJuvie = juvie ? perpRegion['juvie'] + 1 : perpRegion['juvie'];
+                perpRegionFreq[region] = {total: perpRegionTotal, juvie: perpRegionJuvie};
+
+                /* gender */
+                /// perp
+                let perpGender = perpGenderFreq[gender] ? perpGenderFreq[gender] : {total: 0, juvie: 0};
+                let perpGenderTotal = perpGender['total'] + 1;
+                let perpGenderJuvie = juvie ? perpGender['juvie'] + 1 : perpGender['juvie'];
+                perpGenderFreq[gender] = {total: perpGenderTotal, juvie: perpGenderJuvie};
+                
+
+                
+            });
+
+            /// gender - victim
+            let male = 0;
+            let female = 0;
+            Object.entries(victRaceFreq).forEach(race => {
+                male += race[1]['male'];
+                female += race[1]['female'];
+            });
+            victGenderFreq = {male: male, female: female};
+
+            // top 5 states and other
+            // sort dictionary and aggregate the rest of the data
+            let top_5_states_freq = Object.keys(perpStateFreq).map(function(k) {
+                return [k, perpStateFreq[k]];
+            })
+
+            top_5_states_freq.sort(function(prev, curr) {
+                return curr[1]['total'] - prev[1]['total'];
+            })
+
+            top_5_states_freq = top_5_states_freq.slice(0, 8);
+
+            let topStatesDict = {};
+
+            for (let i = 0; i < top_5_states_freq.length; i++) {
+                topStatesDict[top_5_states_freq[i][0]] = top_5_states_freq[i][1];
+            }
+
+            // year ranges (1977-2023)
+            // const yearExtent = d3.extent(Object.keys(perpYearFreq));
+            // let yearRanges = [yearExtent[0]];
+            // let interval = Math.ceil((yearExtent[1]-yearExtent[0])/4);
+            // let i = yearExtent[0];
+            // while (i <= yearExtent[1]) {
+            //     yearRanges.push(i);
+            //     i = i + interval;
+            // }
+            
+            // let perpYears = {};
+            // perpYearFreq.forEach(year => {
+
+            // });
+            
+
+
+            // perpetrator 
+            // console.log("year");
+            // console.log(perpYearFreq);
+            // console.log("month");
+            // console.log(perpMonthFreq);
+            // console.log("race");
+            // console.log(perpRaceFreq);
+            // console.log("state");
+            // console.log(perpStateFreq);
+            // console.log("region");
+            // console.log(perpRegionFreq);
+            // console.log("gender");
+            // console.log(perpGenderFreq);
+
+            // // victim
+            // console.log("v race");
+            // console.log(victRaceFreq);
+            // console.log("v gender");
+            // console.log(victGenderFreq);
+
+
+        });
+
+
+
+      // TODO: add titles for each radial chart (add in radial_chart.js file)
+
+      // TODO: change "Number Executed" to "Number of Perpetrators Executed"
 
       const data = [
         {x: "g1", m: 50, f: 30},
