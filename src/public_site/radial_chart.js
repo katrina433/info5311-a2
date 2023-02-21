@@ -90,4 +90,43 @@ function radialChart(svg, data) {
     .attr("transform", d => `rotate(${(xScale(d.x) + xScale.bandwidth()/2) * 180/Math.PI})`)
     .attr("y", d => -yScale(d.m + d.f) - 10)
     .text(d => d.x);
+
+  // append button bar
+  const Active_Btn_Color = "#F5EAEA";
+  const Inactive_Btn_Color = "#aaa";
+
+  const buttonOptions = ['Race','State', 'Region','Gender','Year'];
+  buttonOptions.forEach((option) => {
+  d3.select("div#button-bar")
+    .append("button")
+    .attr("id", "btn btn-primary")
+    .attr("id", option)
+    .text(option)
+    .style("background-color", Inactive_Btn_Color)
+    .style("margin-right", "10px")
+    .on("click", filterChart)
+});
+
+// set button color and update chart
+function filterChart(){
+  let filterText = d3.select(this).text();
+  d3.select(this).style("background-color", Active_Btn_Color);
+  // unselect other buttons
+  buttonOptions.forEach((option) => {
+  if (option != filterText){
+    d3.select("button#" + option).style("background-color", Inactive_Btn_Color);
+  }
+});
+
+  updateChart(filterText);
+
 }
+
+// update chart based on button selection
+function updateChart(filterText){
+
+};
+
+
+
+};
