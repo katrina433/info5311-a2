@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="css/custom-style.css">
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="/radial_chart.js"></script>
     <style>
         .gridlines .domain {
           display: none;
@@ -27,8 +28,23 @@
 <body>
     <h1>INFO5311: HW2 - Interactive Visualization Design </h1>
 
-<svg id="barchart" height="500" width="800" style="margin-top:50px;margin-left:-50px">
-</svg>
+    <svg id="radial_chart" height="700" width="700">
+    </svg>
+  
+    <script>
+      const svg = d3.select("svg#radial_chart");
+  
+      const data = [
+        {x: "g1", y: 50},
+        {x: "g2", y: 30},
+        {x: "g3", y: 40},
+        {x: "g4", y: 30},
+        {x: "g5", y: 70},
+        {x: "g6", y: 20},
+      ]
+      radialChart(svg, data);
+  
+    </script>
 
 
 </body>
