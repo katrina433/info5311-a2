@@ -2,7 +2,7 @@
  * Create a radial chart for the given data.
  *
  * @param svg the canvas for chart display.
- * @param data data in the format of INACCURATE -> [{x: category, t: total }]
+ * @param data data in the format of [{x: category, y: {subcategory: value}]
  */
 function radialChart(svg, data, title) {
   const width = svg.attr("width");
