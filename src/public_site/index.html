@@ -228,11 +228,11 @@
             // data is in the form of [{x: category, m: num male perpetrator, f: num female perpetrator}]
             // title is the chart title displayed above the radial chart
             const buttonOptions = {
-              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({x: k, "m": v.male, "f": v.female})), "Number of Perpetrators Executed vs Perpetrator Race"],
-              'State': [],
-              'Region': [],
-              'Gender': [],
-              'Year': []
+              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({x: k, "t": v.total})), "Number of Perpetrators Executed based on Race"],
+              'State': [Object.entries(perpStateFreq).map(([k, v]) => ({ x: k, "t": v.total })),"Number of Perpetrators Executed based on State"],  
+              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Region"],
+              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Gender"],
+              'Year': [Object.entries(perpYearFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Year"]
             }
 
             // set up the filtering buttons

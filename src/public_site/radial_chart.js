@@ -2,7 +2,7 @@
  * Create a radial chart for the given data.
  * 
  * @param svg the canvas for chart display.
- * @param data data in the format of [{x: category, m: num male perpetrator, f: num female perpetrator}]
+ * @param data data in the format of INACCURATE -> [{x: category, t: total }]
  */
 function radialChart(svg, data, title) {
   const width = svg.attr("width");
@@ -13,10 +13,14 @@ function radialChart(svg, data, title) {
   const chart = svg
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
-
+    
+// top 10 data only
+  data = data.sort((a, b) => b.t - a.t).slice(0, 10)
+  console.log("radial chart data")
+  console.log(data)
   // x and y extent and scale 
   const xExtent = new Set(data.map(d => d.x));
-  const yExtent = d3.extent(data, d => d.m + d.f);
+  const yExtent = d3.extent(data, d => d.t);
   const xScale = d3.scaleBand().domain(xExtent).range([0, 2 * Math.PI]);
   const yScale = d3.scaleRadial().domain([0, yExtent[1]]).range([innerRadius, outerRadius]);
 
@@ -42,7 +46,7 @@ function radialChart(svg, data, title) {
 
   // y axis labels on the circular axes
   axes.append("text")
-    .attr("y", d => -yScale(d) + 6)
+    .attr("y", d => -yScale(d))
     .attr("text-anchor", "middle")
     .attr("background-color", "blue")
     .text(yScale.tickFormat(5, "s"));
@@ -51,7 +55,7 @@ function radialChart(svg, data, title) {
   chart.append("text")
     .attr("y", -yScale(yExtent[1]) - 20)
     .attr("text-anchor", "middle")
-    .text("Number of Perpetrators Executed");
+    .text("Count");
 
   // chart title
   chart.append("text")
@@ -63,14 +67,14 @@ function radialChart(svg, data, title) {
   // arc generator for the circular bars
   const arcGeneratorMale = d3.arc()
     .innerRadius(d => yScale(0))
-    .outerRadius(d => yScale(d.m))
+    .outerRadius(d => yScale(d.t))
     .startAngle(d => xScale(d.x) + 0.15)
     .endAngle(d => xScale(d.x) + xScale.bandwidth() - 0.15)
     .padRadius(innerRadius);
 
   const arcGeneratorFemale = d3.arc()
-    .innerRadius(d => yScale(d.m))
-    .outerRadius(d => yScale(d.m + d.f))
+    .innerRadius(d => yScale(d.t))
+    .outerRadius(d => yScale(d.t))
     .startAngle(d => xScale(d.x) + 0.15)
     .endAngle(d => xScale(d.x) + xScale.bandwidth() - 0.15)
     .padRadius(innerRadius);
@@ -95,7 +99,7 @@ function radialChart(svg, data, title) {
   // x labels above the bars
   bars.append("text")
     .attr("transform", d => `rotate(${(xScale(d.x) + xScale.bandwidth()/2) * 180/Math.PI})`)
-    .attr("y", d => -yScale(d.m + d.f) - 10)
+    .attr("y", d => -yScale(d.t) - 10)
     .attr("text-anchor", "middle")
     .text(d => d.x);
 
