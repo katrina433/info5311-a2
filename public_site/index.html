@@ -116,7 +116,7 @@
                 /// victim  
                 const races = ["White", "Black", "Latino", "Asian", "Native American", "American Indian or Alaska Native", "Other Race"];                
                 races.forEach(race => {
-                    let shortenedRace = race === "American Indian or Alaska Native" ? "American Indian" : race;
+                    let shortenedRace = race === "American Indian or Alaska Native" ? "Native American" : race;
                     let victRace = victRaceFreq[shortenedRace] ? victRaceFreq[shortenedRace] : {total: 0, male: 0, female: 0};
                     let raceMaleVictims = d["Number of " + race + " Male Victims"] ? d["Number of " + race + " Male Victims"] : 0;
                     let raceFemaleVictims = d["Number of " + race + " Female Victims"] ? d["Number of " + race + " Female Victims"] : 0;
@@ -130,7 +130,7 @@
                 /* state */
                 /// perp
                 let state = d["State"].trim();
-                let perpState = perpStateFreq[state] ? perpStateFreq[state] : {total: 0, juvie: 0}
+                let perpState = perpStateFreq[state] ? perpStateFreq[state] : {total: 0, juvie: 0};
                 let perpStateTotal = perpState['total'] + 1;
                 let perpStateJuvie = juvie ? perpState['juvie'] + 1 : perpState['juvie'];
                 perpStateFreq[state] = {total: perpStateTotal, juvie: perpStateJuvie};
