@@ -9,7 +9,7 @@ function radialChart(svg, data, title) {
   const height = svg.attr("height");
   const margin = 50;
   const outerRadius = Math.min(width, height) / 2 - margin;
-  const innerRadius = outerRadius / 2;
+  const innerRadius = outerRadius / 3;
   const chart = svg
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
