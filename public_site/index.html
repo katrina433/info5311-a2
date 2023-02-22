@@ -116,7 +116,7 @@
                 /// victim  
                 const races = ["White", "Black", "Latino", "Asian", "Native American", "American Indian or Alaska Native", "Other Race"];                
                 races.forEach(race => {
-                    let shortenedRace = race === "American Indian or Alaska Native" ? "American Indian" : race;
+                    let shortenedRace = race === "American Indian or Alaska Native" ? "Native American" : race;
                     let victRace = victRaceFreq[shortenedRace] ? victRaceFreq[shortenedRace] : {total: 0, male: 0, female: 0};
                     let raceMaleVictims = d["Number of " + race + " Male Victims"] ? d["Number of " + race + " Male Victims"] : 0;
                     let raceFemaleVictims = d["Number of " + race + " Female Victims"] ? d["Number of " + race + " Female Victims"] : 0;
@@ -265,7 +265,7 @@
             const buttonOptions = {
               'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
               'Victim Race': [Object.entries(victRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Victims Based on Victim Race and Gender"],
-              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
+              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Race"],  
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
               'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"]
@@ -281,6 +281,9 @@
               .style("margin-right", "10px")
               .on("click", filterChart)
             });
+
+            d3.select(`button#button0`).style("background-color", Active_Btn_Color);
+            radialChart(svg, buttonOptions['Perpetrator Race'][0], buttonOptions['Perpetrator Race'][1]);
 
             // set button color and update chart
             function filterChart(){
