@@ -130,10 +130,14 @@
                 /* state */
                 /// perp
                 let state = d["State"].trim();
-                let perpState = perpStateFreq[state] ? perpStateFreq[state] : {total: 0, juvie: 0}
+                let perpState = perpStateFreq[state] ? perpStateFreq[state] : {total: 0, juvie: 0, white: 0, black: 0, latino: 0, asian: 0, other: 0}
                 let perpStateTotal = perpState['total'] + 1;
                 let perpStateJuvie = juvie ? perpState['juvie'] + 1 : perpState['juvie'];
-                perpStateFreq[state] = {total: perpStateTotal, juvie: perpStateJuvie};
+                let perpStateWhite = race === "White" ? perpState['white'] + 1 : perpState['white'];
+                let perpStateBlack = race === "Black" ? perpState['black'] + 1 : perpState['black'];
+                let perpStateLatino = race === "Latino" ? perpState['latino'] + 1 : perpState['latino'];
+                let perpStateAsian = race === "Asian" ? perpState['asian'] + 1 : perpState['asian'];
+                perpStateFreq[state] = {total: perpStateTotal, juvie: perpStateJuvie,  white: perpStateWhite, black: perpStateBlack, latino: perpStateLatino, asian: perpStateAsian};
 
 
                 /* region */
@@ -185,11 +189,14 @@
                 topStatesDict[top_states_freq[i][0]] = top_states_freq[i][1];
             }
 
-            topStatesDict["Other"] = {total: 0, juvie: 0};
+            topStatesDict["Other"] = {total: 0, white: 0, black: 0, latino: 0, asian: 0};
 
             for (let i = 0; i < other_states_freq.length; i++) {
               topStatesDict["Other"]["total"] += other_states_freq[i][1]["total"];
-              topStatesDict["Other"]["juvie"] += other_states_freq[i][1]["juvie"];
+              topStatesDict["Other"]["white"] += other_states_freq[i][1]["white"];
+              topStatesDict["Other"]["black"] += other_states_freq[i][1]["black"];
+              topStatesDict["Other"]["latino"] += other_states_freq[i][1]["latino"];
+              topStatesDict["Other"]["asian"] += other_states_freq[i][1]["asian"];
             }
 
             console.log(topStatesDict);
@@ -253,13 +260,15 @@
             // data is in the form of [{x: category, y: {subcategory: value}]
             // title is the chart title displayed above the radial chart
 
+            // removed "Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie, from state
+
             const buttonOptions = {
               'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
               'Victim Race': [Object.entries(victRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Victims Based on Victim Race and Gender"],
-              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"Total": v.total, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
-              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Count": v.total} })), "Number of Perpetrators Executed Based on Region"],
-              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Count": v.total} })), "Number of Perpetrators Executed Based on Gender"],
-              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Total": v.total, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"]
+              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
+              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
+              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
+              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"]
             }
 
             // set up the filtering buttons
