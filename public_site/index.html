@@ -27,8 +27,7 @@
 </head>
 <body>
     <h1>INFO5311: HW2 - Interactive Visualization Design</h1>
-    <a href="https://www.kaggle.com/datasets/johnny1994/execution-data-in-us">Dataset: Execution Data from 1976
-        – 2019</a>
+    <a href="https://www.kaggle.com/datasets/johnny1994/execution-data-in-us">Dataset: Execution Data in the US</a>
     <h3>Execution Data</h3>
     <h5>Introduction/Motivation</h5>
         <div id="button-bar"></div>
@@ -106,23 +105,25 @@
                 /* race */
                 /// perpetrator
                 let race = d["Race"].trim();
-                let perpRace = perpRaceFreq[race] ? perpRaceFreq[race] : {total: 0, juvie: 0, male: 0, female: 0};
+                let shortenedRace = race === "American Indian or Alaska Native" ? "American Indian" : race;
+                let perpRace = perpRaceFreq[shortenedRace] ? perpRaceFreq[shortenedRace] : {total: 0, juvie: 0, male: 0, female: 0};
                 let perpRaceTotal = perpRace['total'] + 1;
                 let perpRaceJuvie = juvie ? perpRace['juvie'] + 1 : perpRace['juvie'];
                 let perpRaceMale = gender === "Male" ? perpRace['male'] + 1 : perpRace['male'];
                 let perpRaceFemale = gender === "Female" ? perpRace['female'] + 1 : perpRace['female'];
-                perpRaceFreq[race] = {total: perpRaceTotal, juvie: perpRaceJuvie, male: perpRaceMale, female: perpRaceFemale};
+                perpRaceFreq[shortenedRace] = {total: perpRaceTotal, juvie: perpRaceJuvie, male: perpRaceMale, female: perpRaceFemale};
 
                 /// victim  
                 const races = ["White", "Black", "Latino", "Asian", "Native American", "American Indian or Alaska Native", "Other Race"];                
                 races.forEach(race => {
-                    let victRace = victRaceFreq[race] ? victRaceFreq[race] : {total: 0, male: 0, female: 0};
+                    let shortenedRace = race === "American Indian or Alaska Native" ? "American Indian" : race;
+                    let victRace = victRaceFreq[shortenedRace] ? victRaceFreq[shortenedRace] : {total: 0, male: 0, female: 0};
                     let raceMaleVictims = d["Number of " + race + " Male Victims"] ? d["Number of " + race + " Male Victims"] : 0;
                     let raceFemaleVictims = d["Number of " + race + " Female Victims"] ? d["Number of " + race + " Female Victims"] : 0;
                     let victRaceMale = victRace['male'] + raceMaleVictims;
                     let victRaceFemale = victRace['female'] + raceFemaleVictims;
                     let victRaceTotal = victRace['total'] + raceMaleVictims + raceFemaleVictims;
-                    victRaceFreq[race] = {total: victRaceTotal, male: victRaceMale, female: victRaceFemale};
+                    victRaceFreq[shortenedRace] = {total: victRaceTotal, male: victRaceMale, female: victRaceFemale};
                 });
 
 
@@ -182,9 +183,23 @@
             }
 
             // year ranges (1977-2023)
-            // const yearExtent = d3.extent(Object.keys(perpYearFreq));
-            // let yearRanges = [yearExtent[0]];
-            // let interval = Math.ceil((yearExtent[1]-yearExtent[0])/4);
+            const yearExtent = d3.extent(Object.keys(perpYearFreq));
+            let startYear = Number(yearExtent[0]);
+            let endYear = Number(yearExtent[1]);
+            let yearRanges = [];
+            let interval = Math.ceil((endYear-startYear)/6);
+
+            for(let i = startYear; i <= endYear; i += interval){
+              yearRanges.push(i);
+            }
+
+            yearRanges.push(endYear);
+
+            // TODO: aggregate year frequencies
+
+            // console.log(yearRanges);
+
+            // console.log(yearRanges);
             // let i = yearExtent[0];
             // while (i <= yearExtent[1]) {
             //     yearRanges.push(i);
@@ -228,11 +243,11 @@
             // data is in the form of [{x: category, m: num male perpetrator, f: num female perpetrator}]
             // title is the chart title displayed above the radial chart
             const buttonOptions = {
-              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, "m": v.male, "f": v.female })), "Number of Perpetrators Executed with gender based on Race"],
-              'State': [Object.entries(perpStateFreq).map(([k, v]) => ({ x: k, "m": v.total, "f": v.juvie })), "Number of Perpetrators Executed with juvie based on region"],  
-              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Region"],
-              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Gender"],
-              'Year': [Object.entries(perpYearFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of perpetrators executed by year among the top 10"]
+              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, "m": v.male, "f": v.female })), "Number of Perpetrators Executed with Gender Based on Race"],
+              'State': [Object.entries(perpStateFreq).map(([k, v]) => ({ x: k, "m": v.total, "f": v.juvie })), "Number of Perpetrators or Juveniles Executed Based on State"],  
+              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed Based on Region"],
+              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed Based on Gender"],
+              'Year': [Object.entries(perpYearFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed By Year Among The Top 10"]
             }
 
             // set up the filtering buttons
