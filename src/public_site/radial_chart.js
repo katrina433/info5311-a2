@@ -165,19 +165,25 @@ function raceRadialChart(svg, data, title) {
   // groups for the bars
   const bars = chart.selectAll("bar")
     .data(data)
-    .join("g");
+    .join("g")
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout);
 
   // bars for total perpetrator
   bars.append("path")
     .attr("fill", "#7DB9B6")
     .attr("opacity", 0.7)
-    .attr("d", arcGeneratorTotal);
+    .attr("d", arcGeneratorTotal)
+    // .on("mouseover", mouseover)
+    // .on("mouseout", mouseout);
 
   // bars for juvie perpetrator
   bars.append("path")
     .attr("fill", "red")
     .attr("opacity", 0.7)
-    .attr("d", arcGeneratorJuvie);
+    .attr("d", arcGeneratorJuvie)
+    // .on("mouseover", mouseover)
+    // .on("mouseout", mouseout);
 
   // x labels above the bars
   bars.append("text")
@@ -185,6 +191,32 @@ function raceRadialChart(svg, data, title) {
     .attr("y", d => -yScale(d.m + d.f) - 10)
     .attr("text-anchor", "middle")
     .text(d => d.x);
+
+  // info display in the center (for hover over)
+  const infoBox = axes.append("g")
+
+  function mouseover() {
+    const bar = d3.select(this);
+    const d = bar.data()[0];
+
+    infoBox.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", -15)
+      .text(d.x);
+
+    infoBox.append("text")
+      .attr("text-anchor", "middle")
+      .text(`male: ${d.m} (${(d.m / (d.m + d.f) * 100).toFixed(2)}%)`);
+
+    infoBox.append("text")
+      .attr("text-anchor", "middle")
+      .attr("dy", 15)
+      .text(`female: ${d.f} (${(d.f / (d.m + d.f) * 100).toFixed(2)}%)`);
+  }
+
+  function mouseout() {
+    infoBox.selectAll("*").remove();
+  }
 
 };
 
