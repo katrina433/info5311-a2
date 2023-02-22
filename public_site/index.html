@@ -261,11 +261,12 @@
             // input data by different filtering options
             // format: {filter: [data, title]}
             // where filter is the text on the filtering button
-            // data is in the form of [{x: category, m: num male perpetrator, f: num female perpetrator}]
+            // data is in the form of [{x: category, y: {subcategory: value}]
             // title is the chart title displayed above the radial chart
 
             const buttonOptions = {
-              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"male": v.male, "female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
+              'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"male": v.male, "female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
+              'Victim Race': [Object.entries(victRaceFreq).map(([k, v]) => ({ x: k, y: {"male": v.male, "female": v.female} })), "Number of Perpetrators Executed with gender based on Victim Race"],
               'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"total": v.total, "juvie": v.juvie} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"count": v.total} })), "Number of Perpetrators Executed Based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"count": v.total} })), "Number of Perpetrators Executed Based on Gender"],
@@ -273,11 +274,10 @@
             }
 
             // set up the filtering buttons
-            Object.keys(buttonOptions).forEach((option) => {
+            Object.keys(buttonOptions).forEach((option, i) => {
             d3.select("div#button-bar")
               .append("button")
-              .attr("id", "btn btn-primary")
-              .attr("id", option)
+              .attr("id", `button${i}`)
               .text(option)
               .style("background-color", Inactive_Btn_Color)
               .style("margin-right", "10px")
@@ -293,9 +293,9 @@
               radialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1])
               
               // unselect other buttons
-              Object.keys(buttonOptions).forEach((option) => {
+              Object.keys(buttonOptions).forEach((option, i) => {
                 if (option != filterText){
-                  d3.select("button#" + option).style("background-color", Inactive_Btn_Color);
+                  d3.select(`button#button${i}`).style("background-color", Inactive_Btn_Color);
                 }
               });
             }
