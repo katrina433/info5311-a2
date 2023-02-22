@@ -228,8 +228,8 @@
             // data is in the form of [{x: category, m: num male perpetrator, f: num female perpetrator}]
             // title is the chart title displayed above the radial chart
             const buttonOptions = {
-              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({x: k, "t": v.total})), "Number of Perpetrators Executed based on Race"],
-              'State': [Object.entries(perpStateFreq).map(([k, v]) => ({ x: k, "t": v.total })),"Number of Perpetrators Executed based on State"],  
+              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, "m": v.male, "f": v.female })), "Number of Perpetrators Executed with gender based on Race"],
+              'State': [Object.entries(perpStateFreq).map(([k, v]) => ({ x: k, "m": v.total, "f": v.juvie })), "Number of Perpetrators Executed with juvie based on region"],  
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Gender"],
               'Year': [Object.entries(perpYearFreq).map(([k, v]) => ({ x: k, "t": v.total })), "Number of Perpetrators Executed based on Year"]
@@ -251,9 +251,19 @@
             function filterChart(){
               let filterText = d3.select(this).text();
               d3.select(this).style("background-color", Active_Btn_Color);
-              console.log(filterText);
               svg.selectAll("*").remove();
-              radialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1]);
+              // update chart
+              if (filterText == 'Race'){
+                raceRadialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1])
+              }
+
+              else if (filterText == 'State'){
+                stateRadialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1])
+              }
+              else{
+                radialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1]);
+              }
+              
 
               // unselect other buttons
               Object.keys(buttonOptions).forEach((option) => {
