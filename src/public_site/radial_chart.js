@@ -4,7 +4,7 @@
  * @param svg the canvas for chart display.
  * @param data data in the format of [{x: category, m: num male perpetrator, f: num female perpetrator}]
  */
-function radialChart(svg, data) {
+function radialChart(svg, data, title) {
   const width = svg.attr("width");
   const height = svg.attr("height");
   const margin = 50;
@@ -51,7 +51,14 @@ function radialChart(svg, data) {
   chart.append("text")
     .attr("y", -yScale(yExtent[1]) - 20)
     .attr("text-anchor", "middle")
-    .text("Number Executed");
+    .text("Number of Perpetrators Executed");
+
+  // chart title
+  chart.append("text")
+    .attr("y", -yScale(yExtent[1]) - 50)
+    .attr("text-anchor", "middle")
+    .attr("font-size", 24)
+    .text(title);
 
   // arc generator for the circular bars
   const arcGeneratorMale = d3.arc()
@@ -89,44 +96,7 @@ function radialChart(svg, data) {
   bars.append("text")
     .attr("transform", d => `rotate(${(xScale(d.x) + xScale.bandwidth()/2) * 180/Math.PI})`)
     .attr("y", d => -yScale(d.m + d.f) - 10)
+    .attr("text-anchor", "middle")
     .text(d => d.x);
-
-  // append button bar
-  const Active_Btn_Color = "#F5EAEA";
-  const Inactive_Btn_Color = "#aaa";
-
-  const buttonOptions = ['Race','State', 'Region','Gender','Year'];
-  buttonOptions.forEach((option) => {
-  d3.select("div#button-bar")
-    .append("button")
-    .attr("id", "btn btn-primary")
-    .attr("id", option)
-    .text(option)
-    .style("background-color", Inactive_Btn_Color)
-    .style("margin-right", "10px")
-    .on("click", filterChart)
-});
-
-// set button color and update chart
-function filterChart(){
-  let filterText = d3.select(this).text();
-  d3.select(this).style("background-color", Active_Btn_Color);
-  // unselect other buttons
-  buttonOptions.forEach((option) => {
-  if (option != filterText){
-    d3.select("button#" + option).style("background-color", Inactive_Btn_Color);
-  }
-});
-
-  updateChart(filterText);
-
-}
-
-// update chart based on button selection
-function updateChart(filterText){
-
-};
-
-
 
 };

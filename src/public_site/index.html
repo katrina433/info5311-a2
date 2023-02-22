@@ -32,7 +32,7 @@
     <h3>Execution Data</h3>
     <h5>Introduction/Motivation</h5>
         <div id="button-bar"></div>
-    <svg id="radial_chart" height="700" width="700"></svg>
+    <svg id="radial_chart" height="800" width="700"></svg>
       
     <script>
       const svg = d3.select("svg#radial_chart");
@@ -212,30 +212,57 @@
             console.log("gender");
             console.log(perpGenderFreq);
 
-            // // victim
+            // victim
             console.log("v race");
             console.log(victRaceFreq);
             console.log("v gender");
             console.log(victGenderFreq);
 
+            // append button bar
+            const Active_Btn_Color = "#F5EAEA";
+            const Inactive_Btn_Color = "#aaa";
 
-        });
+            // input data by different filtering options
+            // format: {filter: [data, title]}
+            // where filter is the text on the filtering button
+            // data is in the form of [{x: category, m: num male perpetrator, f: num female perpetrator}]
+            // title is the chart title displayed above the radial chart
+            const buttonOptions = {
+              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({x: k, "m": v.male, "f": v.female})), "Number of Perpetrators Executed vs Perpetrator Race"],
+              'State': [],
+              'Region': [],
+              'Gender': [],
+              'Year': []
+            }
 
+            // set up the filtering buttons
+            Object.keys(buttonOptions).forEach((option) => {
+            d3.select("div#button-bar")
+              .append("button")
+              .attr("id", "btn btn-primary")
+              .attr("id", option)
+              .text(option)
+              .style("background-color", Inactive_Btn_Color)
+              .style("margin-right", "10px")
+              .on("click", filterChart)
+            });
 
+            // set button color and update chart
+            function filterChart(){
+              let filterText = d3.select(this).text();
+              d3.select(this).style("background-color", Active_Btn_Color);
+              console.log(filterText);
+              svg.selectAll("*").remove();
+              radialChart(svg, buttonOptions[filterText][0], buttonOptions[filterText][1]);
 
-      // TODO: add titles for each radial chart (add in radial_chart.js file)
-
-      // TODO: change "Number Executed" to "Number of Perpetrators Executed"
-
-      const data = [
-        {x: "g1", m: 50, f: 30},
-        {x: "g2", m: 30, f: 50},
-        {x: "g3", m: 40, f: 10},
-        {x: "g4", m: 30, f: 20},
-        {x: "g5", m: 70, f: 30},
-        {x: "g6", m: 20, f: 40},
-      ]
-      radialChart(svg, data);
+              // unselect other buttons
+              Object.keys(buttonOptions).forEach((option) => {
+                if (option != filterText){
+                  d3.select("button#" + option).style("background-color", Inactive_Btn_Color);
+                }
+              });
+            }
+          });
   
     </script>
 
