@@ -100,10 +100,14 @@
                 d['month'] = month;
                 d['year'] = year;
 
-                let perpYear = perpYearFreq[year] ? perpYearFreq[year] : {total: 0, juvie: 0};
+                let perpYear = perpYearFreq[year] ? perpYearFreq[year] : {total: 0, juvie: 0, white: 0, black: 0, latino: 0, asian: 0};
                 let perpYearTotal = perpYear['total'] + 1;
                 let perpYearJuvie = juvie ? perpYear['juvie'] + 1 : perpYear['juvie'];
-                perpYearFreq[year] = {total: perpYearTotal, juvie: perpYearJuvie};
+                let perpYearWhite = race === "White" ? perpYear['white'] + 1 : perpYear['white'];
+                let perpYearBlack = race === "Black" ? perpYear['black'] + 1 : perpYear['black'];
+                let perpYearLatino = race === "Latino" ? perpYear['latino'] + 1 : perpYear['latino'];
+                let perpYearAsian = race === "Asian" ? perpYear['asian'] + 1 : perpYear['asian'];
+                perpYearFreq[year] = {total: perpYearTotal, juvie: perpYearJuvie, white: perpYearWhite, black: perpYearBlack, latino: perpYearLatino, asian: perpYearAsian};
 
                 let perpMonth = perpMonthFreq[month];
                 let perpMonthTotal = perpMonth['total'] + 1;
@@ -231,18 +235,28 @@
               let end = i + interval > 2023 ? 2023 : i + interval;
               let yearTotal = 0;
               let juvieTotal = 0;
+              let whiteTotal = 0;
+              let blackTotal = 0;
+              let latinoTotal = 0;
+              let asianTotal = 0;
 
               for (let i = start; i < end; i+=1) {
                 if(perpYearFreq[i]) {
                   yearTotal += perpYearFreq[i]['total'];
                   juvieTotal += perpYearFreq[i]['juvie'];
+                  whiteTotal += perpYearFreq[i]['white'];
+                  blackTotal += perpYearFreq[i]['black'];
+                  latinoTotal += perpYearFreq[i]['latino'];
+                  asianTotal += perpYearFreq[i]['asian'];
                 }
               }
               end = ""+(end-1);
               end = end.substring(2,4);
-              perpYearRanges[start+"-"+end] = {total: yearTotal, juvie: juvieTotal};
+              perpYearRanges[start+"-"+end] = {total: yearTotal, juvie: juvieTotal, white: whiteTotal, black: blackTotal, latino: latinoTotal, asian: asianTotal};
             }
 
+
+            console.log(perpYearRanges);
 
             // perpetrator 
             console.log("year");
@@ -276,6 +290,7 @@
 
             // removed "Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie, from state
             // removed Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie from month
+            // removed '' from year
 
             const buttonOptions = {
               'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
@@ -283,7 +298,7 @@
               'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Race"],  
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
-              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"],
+              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed By Years (1977-2023)"],
               'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Number of Perpetrators Executed By Month and Region"]
             }
 
