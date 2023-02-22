@@ -103,6 +103,7 @@ function radialChart(svg, data, title) {
   });
 
   // x labels above the bars
+
   bars
     .append("text")
     .attr(

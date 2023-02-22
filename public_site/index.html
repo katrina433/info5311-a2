@@ -196,42 +196,31 @@
 
 
             // year ranges (1977-2023)
+            const NUM_YEAR_INTERVALS = 15;
             const yearExtent = d3.extent(Object.keys(perpYearFreq));
             let startYear = Number(yearExtent[0]);
             let endYear = Number(yearExtent[1]);
             let yearRanges = [];
-            let interval = Math.ceil((endYear-startYear)/6);
+            let interval = Math.ceil((endYear-startYear)/NUM_YEAR_INTERVALS);
 
             perpYearRanges = {};
 
             for(let i = startYear; i <= endYear; i += interval){
               let start = i;
               let end = i + interval;
-              for (let i = start; i < end; i++) {
-                perpYearRanges[start] = perpYearRanges[start] ? perpYearRanges[start] + perpYearFreq[i] : perpYearFreq[start];
+              let yearTotal = 0;
+              let juvieTotal = 0;
+
+              for (let i = start; i < end; i+=1) {
+                if(perpYearFreq[i]) {
+                  yearTotal += perpYearFreq[i]['total'];
+                  juvieTotal += perpYearFreq[i]['juvie'];
+                }
               }
+              perpYearRanges[start] = {end: end, total: yearTotal, juvie: juvieTotal};
             }
 
-            console.log(perpYearRanges);
-
-            
-
-            // TODO: aggregate year frequencies
-
-            // console.log(yearRanges);
-
-            // console.log(yearRanges);
-            // let i = yearExtent[0];
-            // while (i <= yearExtent[1]) {
-            //     yearRanges.push(i);
-            //     i = i + interval;
-            // }
-            
-            // let perpYears = {};
-            // perpYearFreq.forEach(year => {
-
-            // });
-            
+            // console.log(perpYearRanges);
 
 
             // perpetrator 
@@ -265,11 +254,11 @@
             // title is the chart title displayed above the radial chart
 
             const buttonOptions = {
-              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"male": v.male, "female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
-              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"total": v.total, "juvie": v.juvie} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
-              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"count": v.total} })), "Number of Perpetrators Executed Based on Region"],
-              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"count": v.total} })), "Number of Perpetrators Executed Based on Gender"],
-              'Year': [Object.entries(perpYearFreq).map(([k, v]) => ({ x: k, y: {"count": v.total} })), "Number of Perpetrators Executed By Years"]
+              'Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
+              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"Total": v.total, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based On State and Juvenile Status"],  
+              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Count": v.total} })), "Number of Perpetrators Executed Based on Region"],
+              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Count": v.total} })), "Number of Perpetrators Executed Based on Gender"],
+              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Total": v.total, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"]
             }
 
             // set up the filtering buttons
