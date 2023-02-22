@@ -207,7 +207,7 @@
 
             for(let i = startYear; i <= endYear; i += interval){
               let start = i;
-              let end = i + interval;
+              let end = i + interval > 2023 ? 2023 : i + interval;
               let yearTotal = 0;
               let juvieTotal = 0;
 
@@ -217,10 +217,10 @@
                   juvieTotal += perpYearFreq[i]['juvie'];
                 }
               }
-              perpYearRanges[start] = {end: end, total: yearTotal, juvie: juvieTotal};
+              end = ""+(end-1);
+              end = end.substring(2,4);
+              perpYearRanges[start+"-"+end] = {total: yearTotal, juvie: juvieTotal};
             }
-
-            // console.log(perpYearRanges);
 
 
             // perpetrator 
