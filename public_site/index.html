@@ -273,6 +273,9 @@
               .on("click", filterChart)
             });
 
+            d3.select(`button#button0`).style("background-color", Active_Btn_Color);
+            radialChart(svg, buttonOptions['Perpetrator Race'][0], buttonOptions['Perpetrator Race'][1]);
+
             // set button color and update chart
             function filterChart(){
               let filterText = d3.select(this).text();
