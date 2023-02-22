@@ -47,12 +47,12 @@
             Number of Native American Male Victims,Number of Other Race Male Victims,Number of White Female Victims,
             Number of Black Female Victims,Number of Latino Female Victims,Number of Asian Female Victims,
             Number of American Indian or Alaska Native Female Victims,Number of Other Race Female Victims,Victim(s) Race(s) 
-
             */
 
             // Clean data types
             const timeParser = d3.timeParse('%m/%d/%y');
-            
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const regions = ["South", "West", "Midwest", "Northeast"]
             // Counter dictionaries
 
             // Year Intervals (total + by juvie)
@@ -60,6 +60,9 @@
 
             // Month (total + by juvie)
             let perpMonthFreq = {};
+            months.forEach(month => {
+              perpMonthFreq[month] = {total: 0, juvie: 0, south: 0, west: 0, midwest: 0, northeast: 0};
+            })
 
             // Race (total + by victim gender + by juvie)
             let perpRaceFreq = {};
@@ -83,10 +86,15 @@
                 let juvie = d["Juvenile"].trim() === "no" ? false : true;
                 // number of victims
                 let num_victims = d["Number of Victims"];
+                // race of perpetrator
+                let race = d["Race"].trim();
+                // region
+                let region = d["Region"].trim();
+
 
                 /* date */
                 let date = timeParser(d["Execution Date"]);
-                let month = date.getMonth();
+                let month = months[date.getMonth()];
                 let year = date.getFullYear();
 
                 d['month'] = month;
@@ -97,14 +105,19 @@
                 let perpYearJuvie = juvie ? perpYear['juvie'] + 1 : perpYear['juvie'];
                 perpYearFreq[year] = {total: perpYearTotal, juvie: perpYearJuvie};
 
-                let perpMonth = perpMonthFreq[month] ? perpMonthFreq[month] : {total: 0, juvie: 0};
+                let perpMonth = perpMonthFreq[month];
                 let perpMonthTotal = perpMonth['total'] + 1;
                 let perpMonthJuvie = juvie ? perpMonth['juvie'] + 1 : perpMonth['juvie'];
-                perpMonthFreq[month] = {total: perpMonthTotal, juvie: perpMonthJuvie};
+                let perpMonthSouth = region === "South" ? perpMonth['south'] + 1 : perpMonth['south'];
+                let perpMonthWest = region === "West" ? perpMonth['west'] + 1 : perpMonth['west'];
+                let perpMonthMidwest = region === "Midwest" ? perpMonth['midwest'] + 1 : perpMonth['midwest'];
+                let perpMonthNortheast = region === "Northeast" ? perpMonth['northeast'] + 1 : perpMonth['northeast'];
+
+                perpMonthFreq[month] = {total: perpMonthTotal, juvie: perpMonthJuvie, south: perpMonthSouth, west: perpMonthWest, midwest: perpMonthMidwest, northeast: perpMonthNortheast};
                 
                 /* race */
                 /// perpetrator
-                let race = d["Race"].trim();
+                
                 let shortenedRace = race === "American Indian or Alaska Native" ? "American Indian" : race;
                 let perpRace = perpRaceFreq[shortenedRace] ? perpRaceFreq[shortenedRace] : {total: 0, juvie: 0, male: 0, female: 0};
                 let perpRaceTotal = perpRace['total'] + 1;
@@ -112,6 +125,8 @@
                 let perpRaceMale = gender === "Male" ? perpRace['male'] + 1 : perpRace['male'];
                 let perpRaceFemale = gender === "Female" ? perpRace['female'] + 1 : perpRace['female'];
                 perpRaceFreq[shortenedRace] = {total: perpRaceTotal, juvie: perpRaceJuvie, male: perpRaceMale, female: perpRaceFemale};
+
+
 
                 /// victim  
                 const races = ["White", "Black", "Latino", "Asian", "Native American", "American Indian or Alaska Native", "Other Race"];                
@@ -142,7 +157,6 @@
 
                 /* region */
                 /// perp
-                let region = d["Region"].trim();
                 let perpRegion = perpRegionFreq[region] ? perpRegionFreq[region] : {total: 0, juvie: 0}
                 let perpRegionTotal = perpRegion['total'] + 1;
                 let perpRegionJuvie = juvie ? perpRegion['juvie'] + 1 : perpRegion['juvie'];
@@ -261,6 +275,7 @@
             // title is the chart title displayed above the radial chart
 
             // removed "Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie, from state
+            // removed Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie from month
 
             const buttonOptions = {
               'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
@@ -268,7 +283,8 @@
               'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Race"],  
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
-              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"]
+              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"],
+              'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Number of Perpetrators Executed By Month"]
             }
 
             // set up the filtering buttons
