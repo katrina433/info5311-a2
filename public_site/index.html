@@ -284,7 +284,7 @@
               'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
               'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
               'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed By Years (1977-2023)"],
-              'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Number of Perpetrators Executed By Month"]
+              'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Number of Perpetrators Executed By Month and Region"]
             }
 
             // set up the filtering buttons
