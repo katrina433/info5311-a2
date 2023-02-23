@@ -27,9 +27,15 @@
 </head>
 <body>
     <h1>INFO5311: HW2 - Interactive Visualization Design</h1>
+    <h3>Execution Data Visualization in the United States</h3>
+    <h6>Katrina Wang (kw433), Jessica Feng (jyf5), Jiaxin Li (jl3579)</h6>
     <a href="https://www.kaggle.com/datasets/johnny1994/execution-data-in-us">Dataset: Execution Data in the US</a>
-    <h3>Execution Data</h3>
-    <h5>Introduction/Motivation</h5>
+    <h5>Introduction</h5>
+    Our visualization and dataset is about capital punishment, also known as the death penalty. This is a method by which a person is deliberately killed as a punishment for a crime, generally following a state-authorized, rule-governed process to establish that the person has violated a norm-warranting punishment.
+The dataset includes variables related to executions in the US, including the number of executions, name of the perpetrator, perpetrator race, perpetrator sex, region, state, country, whether or not they are a juvenile, victim details, execution date, etc. We chose this dataset because it not only included details about the perpetrator and execution itself, but also adds some additional factors that might have contributed to their conviction and the court’s decision to punish the perpetrator with the death penalty. 
+
+    <h5>Visualization</h5>
+    <p></p>
     <div id="button-bar" style="width:900px;display:flex;justify-content:space-between;"></div>
     <svg id="radial_chart" height="1000" width="900"></svg>
       
@@ -256,27 +262,25 @@
             }
 
 
-            console.log(perpYearRanges);
-
             // perpetrator 
-            console.log("year");
-            console.log(perpYearFreq);
-            console.log("month");
-            console.log(perpMonthFreq);
-            console.log("race");
-            console.log(perpRaceFreq);
-            console.log("state");
-            console.log(perpStateFreq);
-            console.log("region");
-            console.log(perpRegionFreq);
-            console.log("gender");
-            console.log(perpGenderFreq);
+            // console.log("year");
+            // console.log(perpYearFreq);
+            // console.log("month");
+            // console.log(perpMonthFreq);
+            // console.log("race");
+            // console.log(perpRaceFreq);
+            // console.log("state");
+            // console.log(perpStateFreq);
+            // console.log("region");
+            // console.log(perpRegionFreq);
+            // console.log("gender");
+            // console.log(perpGenderFreq);
 
-            // victim
-            console.log("v race");
-            console.log(victRaceFreq);
-            console.log("v gender");
-            console.log(victGenderFreq);
+            // // victim
+            // console.log("v race");
+            // console.log(victRaceFreq);
+            // console.log("v gender");
+            // console.log(victGenderFreq);
 
             // append button bar
             const Active_Btn_Color = "#F5EAEA";
@@ -288,18 +292,14 @@
             // data is in the form of [{x: category, y: {subcategory: value}]
             // title is the chart title displayed above the radial chart
 
-            // removed "Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie, from state
-            // removed Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie from month
-            // removed '' from year
-
             const buttonOptions = {
-              'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Perpetrators Executed Based on Race and Gender"],
-              'Victim Race': [Object.entries(victRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Victims Based on Victim Race and Gender"],
-              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed Based On State and Race"],  
-              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Region"],
-              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Number of Perpetrators Executed Based on Gender and"],
-              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Number of Perpetrators Executed By Years (1977-2023)"],
-              'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Number of Perpetrators Executed By Month and Region"]
+              'Perpetrator Race': [Object.entries(perpRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Perpetrators Executed Based on Race and Gender"],
+              'Victim Race': [Object.entries(victRaceFreq).map(([k, v]) => ({ x: k, y: {"Male": v.male, "Female": v.female} })), "Number of Victims Based on Race and Gender"],
+              'State': [Object.entries(topStatesDict).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Perpetrators Executed By State and Race"],  
+              'Region': [Object.entries(perpRegionFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Perpetrators Executed By Region"],
+              'Gender': [Object.entries(perpGenderFreq).map(([k, v]) => ({ x: k, y: {"Non-Juveniles": v.total-v.juvie, "Juveniles": v.juvie} })), "Perpetrators Executed By Gender"],
+              'Year': [Object.entries(perpYearRanges).map(([k, v]) => ({ x: k, y: {"White": v.white, "Black": v.black, "Latino": v.latino, "Asian": v.asian} })), "Perpetrators Executed By Years (1977-2023)"],
+              'Month': [Object.entries(perpMonthFreq).map(([k, v]) => ({ x: k, y: {"South": v.south, "West": v.west, "Midwest": v.midwest, "Northeast": v.northeast} })), "Perpetrators Executed By Month and Region"]
             }
 
             // set up the filtering buttons
